@@ -10,12 +10,13 @@ package modelo;
  */
 
 
+
 public class Operador {
 
     // Contador de operadores
-    private static int contador;
+    private static int contador = 0;
 
-    // Atributos del operador
+    // Atributos 
     private String codigoOp;
     private String nombres;
     private String apellidos;
@@ -23,65 +24,54 @@ public class Operador {
     private String email;
 
     // Constructor
-    public Operador(String codigoOp, String nombres, String apellidos,
+    public Operador(String nombres, String apellidos,
                     Turno turno, String email) {
 
-        this.codigoOp = codigoOp;
+        contador++;
+        this.codigoOp = String.format("OP-%02d", contador);
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.turno = turno;
-        this.email = email;
-
-        contador++;
+        this.email = (email == null) ? "" : email.trim();
     }
 
-    // Obtiene el código
     public String getCodigoOp() {
         return codigoOp;
     }
-
-    // Obtiene los nombres
+    
     public String getNombres() {
         return nombres;
     }
 
-    // Modifica los nombres
     public void setNombres(String nombres) {
         this.nombres = nombres;
     }
 
-    // Obtiene los apellidos
     public String getApellidos() {
         return apellidos;
     }
 
-    // Modifica los apellidos
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
 
-    // Obtiene el nombre completo
     public String getNombreCompleto() {
         return nombres + " " + apellidos;
     }
 
-    // Obtiene el turno
     public Turno getTurno() {
         return turno;
     }
 
-    // Modifica el turno
     public void setTurno(Turno turno) {
         this.turno = turno;
     }
 
-    // Obtiene el correo
     public String getEmail() {
         return email;
     }
 
-    // Modifica el correo
     public void setEmail(String email) {
-        this.email = email;
+        this.email = (email == null) ? "" : email.trim();
     }
 }
