@@ -5,6 +5,7 @@
 package administradores;
 import modelo.Operador;
 import java.util.ArrayList;
+import modelo.Turno;
 
 /**
  *
@@ -13,5 +14,11 @@ import java.util.ArrayList;
 public class AdmiOperador {
     private ArrayList<Operador> operadores=new ArrayList<>();
     
-
+    //metodo para agregar operador
+    public void agregarOperador(String nombres, String apellidos, Turno turno, String email){
+        Operador nuevoOperador=new Operador(nombres, apellidos, turno, email);
+        operadores.add(nuevoOperador);
+    }
+    
+    //metodo para buscar un operador por el codigo
 }
