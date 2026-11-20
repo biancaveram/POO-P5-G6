@@ -3,11 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package administradores;
+import modelo.Operador;
+import java.util.ArrayList;
 
 /**
  *
- * @author USER
+ * @author BIANCA VERA
  */
 public class AdmiOperador {
+    private ArrayList<Operador> operadores=new ArrayList<>();
     
+
 }

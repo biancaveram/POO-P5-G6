@@ -3,11 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package administradores;
+import java.util.ArrayList;
+import modelo.NotaSeguimiento;
 
 /**
  *
- * @author USER
+ * @author BIANCA VERA
  */
 public class AdmiNotas {
+    private ArrayList<NotaSeguimiento> notas=new ArrayList<>();
     
 }
