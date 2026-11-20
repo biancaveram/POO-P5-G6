@@ -10,37 +10,47 @@ package modelo;
  */
 
 
+import java.time.LocalDateTime;
+
 
 public class NotaSeguimiento {
 
-    // Contador de notas
-    private static int contador;
+    // Contador para generar códigos secuenciales
+    private static int contador = 0;
 
     // Atributos de la nota
     private String codigoNota;
-    private String fechaHora;
+    private LocalDateTime fechaHora;
     private String nota;
 
+    // Relaciones
+    private LlamadaEmergencia llamada;
+    private Operador operador;
+
     // Constructor
-    public NotaSeguimiento(String codigoNota, String fechaHora, String nota) {
-        this.codigoNota = codigoNota;
-        this.fechaHora = fechaHora;
-        this.nota = nota;
+    public NotaSeguimiento(String nota,
+                           LlamadaEmergencia llamada,
+                           Operador operador) {
 
         contador++;
+
+        this.codigoNota = String.format("NT-%03d", contador);
+        this.fechaHora = LocalDateTime.now();
+        this.nota = nota;
+        this.llamada = llamada;
+        this.operador = operador;
     }
 
-    // Obtiene el código de la nota
+
     public String getCodigoNota() {
         return codigoNota;
     }
 
-    // Obtiene la fecha y hora
-    public String getFechaHora() {
+    public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
-    // Obtiene el contenido
+
     public String getNota() {
         return nota;
     }
@@ -48,5 +58,13 @@ public class NotaSeguimiento {
     // Modifica el contenido
     public void setNota(String nota) {
         this.nota = nota;
+    }
+
+    public LlamadaEmergencia getLlamada() {
+        return llamada;
+    }
+
+    public Operador getOperador() {
+        return operador;
     }
 }

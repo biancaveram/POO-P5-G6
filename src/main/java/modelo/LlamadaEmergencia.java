@@ -10,34 +10,45 @@ package modelo;
  */
 
 
+
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 public class LlamadaEmergencia {
 
     // Contador de llamadas
-    private static int contador;
+    private static int contador = 0;
 
     // Atributos de la llamada
     private String codigoLlamada;
-    private String fechaHora;
+    private LocalDateTime fechaHora;
     private TipoEmergencia tipoEmergencia;
     private String ciudad;
     private String barrio;
     private Estado estado;
     private String detalle;
 
-    // Constructor
-    public LlamadaEmergencia(String codigoLlamada, String fechaHora,
-            String datoAdicional, TipoEmergencia tipoEmergencia,
-            String ciudad, String barrio, Estado estado, String detalle) {
+    // Relaciones
+    private Ciudadano ciudadano;
+    private Operador operador;
 
-        this.codigoLlamada = codigoLlamada;
-        this.fechaHora = fechaHora;
+    // Constructor
+    public LlamadaEmergencia(TipoEmergencia tipoEmergencia,
+                             String ciudad, String barrio,
+                             String detalle, Ciudadano ciudadano,
+                             Operador operador) {
+
+        contador++;
+        this.codigoLlamada = String.format("LL-%03d", contador);
+
+        this.fechaHora = LocalDateTime.now();
         this.tipoEmergencia = tipoEmergencia;
         this.ciudad = ciudad;
         this.barrio = barrio;
-        this.estado = estado;
+        this.estado = Estado.REGISTRADA;
         this.detalle = detalle;
-
-        contador++;
+        this.ciudadano = ciudadano;
+        this.operador = operador;
     }
 
     // Actualiza el estado de la llamada
@@ -50,8 +61,9 @@ public class LlamadaEmergencia {
     }
 
     // Comprueba si la llamada puede anularse
-    public boolean anularLlamada() {
-        return estado == Estado.REGISTRADA;
+    public boolean puedeAnularse() {
+        return estado == Estado.REGISTRADA
+                && fechaHora.toLocalDate().equals(LocalDate.now());
     }
 
     // Obtiene el código
@@ -59,14 +71,12 @@ public class LlamadaEmergencia {
         return codigoLlamada;
     }
 
-    // Obtiene la fecha y hora
-    public String getFechaHora() {
+    public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
-    // Obtiene el tipo de emergencia
-    public String getTipoEmergencia() {
-        return tipoEmergencia.toString();
+    public TipoEmergencia getTipoEmergencia() {
+        return tipoEmergencia;
     }
 
     // Modifica el tipo de emergencia
@@ -82,8 +92,9 @@ public class LlamadaEmergencia {
         return barrio;
     }
 
-    public String getEstado() {
-        return estado.toString();
+    // Obtiene el estado
+    public Estado getEstado() {
+        return estado;
     }
 
     public void setEstado(Estado estado) {
@@ -96,5 +107,14 @@ public class LlamadaEmergencia {
 
     public void setDetalle(String detalle) {
         this.detalle = detalle;
+    }
+
+    public Ciudadano getCiudadano() {
+        return ciudadano;
+    }
+
+    // Obtiene el operador
+    public Operador getOperador() {
+        return operador;
     }
 }
