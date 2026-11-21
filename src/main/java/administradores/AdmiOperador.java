@@ -16,9 +16,10 @@ public class AdmiOperador {
     private ArrayList<Operador> operadores=new ArrayList<>();
     
     //metodo para agregar operador
-    public void agregarOperador(String nombres, String apellidos, Turno turno, String email){
+    public Operador agregarOperador(String nombres, String apellidos, Turno turno, String email){
         Operador nuevoOperador=new Operador(nombres, apellidos, turno, email);
         operadores.add(nuevoOperador);
+        return nuevoOperador;
     }
     
     //metodo para buscar un operador por el codigo

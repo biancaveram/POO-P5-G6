@@ -89,4 +89,15 @@ public class AdmiLlamadasE {
         return contador;
     }
     
+    //metodo para contar el total de llamadas de un operador
+    public int contadorLlamadasOperador(Operador operador){
+        int contador=0;
+        for(LlamadaEmergencia Ll: llamadas){
+            if(Ll.getOperador()==operador){
+                contador++;
+            }
+        }
+        return contador;
+    }
+    
 }

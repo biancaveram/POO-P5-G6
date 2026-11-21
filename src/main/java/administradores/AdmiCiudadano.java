@@ -13,9 +13,10 @@ public class AdmiCiudadano {
     private ArrayList<Ciudadano> ciudadanos=new ArrayList<>();
     
     //metodo para agregar un ciudadano
-    public void agregarCiudadano(String cedula, String nombres, String apellidos){
+    public Ciudadano agregarCiudadano(String cedula, String nombres, String apellidos){
         Ciudadano nuevoCiudadano=new Ciudadano(cedula, nombres, apellidos);
         ciudadanos.add(nuevoCiudadano);
+        return nuevoCiudadano;
     }
     
     //metodo para buscar a un ciudadano por su cedula
