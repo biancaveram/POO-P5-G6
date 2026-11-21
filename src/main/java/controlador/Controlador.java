@@ -24,11 +24,6 @@ public class Controlador {
     private final AdmiLlamadasE admiLlamadas;
     private final AdmiNotas admiNotas;
 
-    private final List<Operador> operadores = new ArrayList<>();
-    private final List<Ciudadano> ciudadanos = new ArrayList<>();
-    private final List<LlamadaEmergencia> llamadas = new ArrayList<>();
-    private final List<NotaSeguimiento> notas = new ArrayList<>();
-
     private final DateTimeFormatter fmtFechaHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     /**
@@ -55,16 +50,11 @@ public class Controlador {
      * Carga al inicio 1 operador, 1 ciudadano, 1 llamada y 1 nota de seguimiento.
      */
     private void cargarDatosIniciales() {
-        Operador opInicial = new Operador(
-                "Laura",
-                "Mendoza",
-                Turno.MATUTINO,
-                "l.mendoza@ecu911.gob.ec"
-        );
-        operadores.add(opInicial);
+        admiOperador.agregarOperador("Laura", "Mendoza", Turno.MATUTINO, "l.mendoza@ecu911.gob.ec");
+        Operador opInicial = admiOperador.buscarOperador("OP-01");
 
-        Ciudadano ciudInicial = new Ciudadano("0912345678", "Marcos Andres", "Villacis Torres");
-        ciudadanos.add(ciudInicial);
+        admiCiudadano.agregarCiudadano("0912345678", "Marcos Andres", "Villacis Torres");
+        Ciudadano ciudInicial = admiCiudadano.buscarCiudadano("0912345678");
 
         LlamadaEmergencia llamadaInicial = new LlamadaEmergencia(
                 TipoEmergencia.TRANSITO,
@@ -74,14 +64,14 @@ public class Controlador {
                 ciudInicial,
                 opInicial
         );
-        llamadas.add(llamadaInicial);
+        admiLlamadas.registrarLlamada(llamadaInicial);
 
         NotaSeguimiento notaInicial = new NotaSeguimiento(
                 "Se asigna unidad de control de transito al sector.",
                 llamadaInicial,
                 opInicial
         );
-        notas.add(notaInicial);
+        admiNotas.agregarNota(notaInicial);
     }
 
     /**
@@ -123,13 +113,14 @@ public class Controlador {
 
     private void listarLlamadasRecientes() {
         vista.mostrarEncabezado("[Menu Principal > 1. Llamadas > 1.1. Lista de llamadas]");
-        if (llamadas.isEmpty()) {
+        ArrayList<LlamadaEmergencia> lista= admiLlamadas.listaLlamadas();
+        if (lista.isEmpty()) {
             vista.mostrarMensaje("No hay llamadas registradas.");
         } else {
-            vista.mostrarMensaje("Se encontraron " + llamadas.size() + " llamadas registradas.");
+            vista.mostrarMensaje("Se encontraron " + lista.size() + " llamadas registradas.");
             vista.mostrarMensaje("CODIGO | FECHA Y HORA | CIUDADANO | TIPO | CIUDAD | ESTADO");
-            for (int i = llamadas.size() - 1; i >= 0; i--) {
-                LlamadaEmergencia ll = llamadas.get(i);
+            for (int i = lista.size() - 1; i >= 0; i--) {
+                LlamadaEmergencia ll = lista.get(i);
                 String nomCiudadano = (ll.getCiudadano() != null) ? ll.getCiudadano().getNombreCompleto() : "N/A";
                 String fechaStr = (ll.getFechaHora() != null) ? ll.getFechaHora().format(fmtFechaHora) : "N/A";
                 vista.mostrarMensaje(
@@ -147,32 +138,33 @@ public class Controlador {
 
     private void registrarLlamada() {
         vista.mostrarEncabezado("[Menu Principal > 1. Llamadas > 1.2. Registrar llamada]");
-        if (operadores.isEmpty()) {
+        ArrayList<Operador> listaOp = admiOperador.listaOperadores();
+        if (listaOp.isEmpty()) {
             vista.mostrarMensaje("No hay operadores registrados. Registre uno primero en la opcion 2.");
             vista.pausarEnter("Presione ENTER para regresar...");
             return;
         }
 
         vista.mostrarMensaje("Seleccione el operador que atiende la llamada:");
-        for (int i = 0; i < operadores.size(); i++) {
-            Operador o = operadores.get(i);
+        for (int i = 0; i < listaOp.size(); i++) {
+            Operador o = listaOp.get(i);
             vista.mostrarMensaje("[" + (i + 1) + "] " + o.getNombreCompleto() + " (" + o.getCodigoOp() + ")");
         }
-        int idxOp = vista.leerEnteroEnRango("Seleccione el numero de operador: ", 1, operadores.size()) - 1;
-        Operador operadorSeleccionado = operadores.get(idxOp);
+        int idxOp = vista.leerEnteroEnRango("Seleccione el numero de operador: ", 1, listaOp.size()) - 1;
+        Operador operadorSeleccionado = listaOp.get(idxOp);
 
         vista.mostrarMensaje("\nDATOS DEL CIUDADANO");
         String nombres = vista.leerTextoObligatorio("1. Nombres: ", "Nombres");
         String apellidos = vista.leerTextoObligatorio("2. Apellidos: ", "Apellidos");
         String cedula = vista.leerCedulaValida("3. Cedula de identidad (10 digitos sin guiones): ");
 
-        Ciudadano ciudadano = buscarCiudadanoPorCedula(cedula);
+        Ciudadano ciudadano = admiCiudadano.buscarCiudadano(cedula);
         if (ciudadano != null) {
             vista.mostrarMensaje("Ciudadano ya registrado en el sistema: " + ciudadano.getNombreCompleto()
                     + ". Se utilizaran los datos existentes.");
         } else {
-            ciudadano = new Ciudadano(cedula, nombres, apellidos);
-            ciudadanos.add(ciudadano);
+            admiCiudadano.agregarCiudadano(cedula, nombres, apellidos);
+            ciudadano = admiCiudadano.buscarCiudadano(cedula);
         }
 
         vista.mostrarMensaje("\nDATOS DE LA EMERGENCIA");
@@ -197,7 +189,7 @@ public class Controlador {
                 ciudadano,
                 operadorSeleccionado
         );
-        llamadas.add(nuevaLlamada);
+        admiLlamadas.registrarLlamada(nuevaLlamada);
 
         String fechaHoraStr = (nuevaLlamada.getFechaHora() != null)
                 ? nuevaLlamada.getFechaHora().format(fmtFechaHora)
@@ -217,7 +209,7 @@ public class Controlador {
     private void actualizarEstadoLlamada() {
         vista.mostrarEncabezado("[Menu Principal > 1. Llamadas > 1.3. Actualizar estado]");
         List<LlamadaEmergencia> pendientes = new ArrayList<>();
-        for (LlamadaEmergencia ll : llamadas) {
+        for (LlamadaEmergencia ll : admiLlamadas.listaLlamadas()) {
             if (ll.getEstado() != Estado.ATENDIDA) {
                 pendientes.add(ll);
             }
@@ -237,7 +229,7 @@ public class Controlador {
         }
 
         String codigo = vista.leerTextoObligatorio("> Ingrese el codigo de la llamada: ", "Codigo de llamada").toUpperCase();
-        LlamadaEmergencia objetivo = buscarLlamadaPorCodigo(codigo);
+        LlamadaEmergencia objetivo = admiLlamadas.buscarLlamada(codigo);
         if (objetivo == null || objetivo.getEstado() == Estado.ATENDIDA) {
             vista.mostrarMensaje("No se encontro una llamada pendiente con el codigo " + codigo + ".");
             vista.pausarEnter("Presione ENTER para regresar...");
@@ -261,7 +253,7 @@ public class Controlador {
         vista.mostrarEncabezado("[Menu Principal > 1. Llamadas > 1.4. Anular llamada]");
         List<LlamadaEmergencia> anulables = new ArrayList<>();
 
-        for (LlamadaEmergencia ll : llamadas) {
+        for (LlamadaEmergencia ll : admiLlamadas.listaLlamadas()) {
             if (ll.puedeAnularse()) {
                 anulables.add(ll);
             }
@@ -301,27 +293,29 @@ public class Controlador {
                 + " (" + seleccionada.getTipoEmergencia() + " en " + seleccionada.getCiudad() + ")");
 
         if (vista.confirmarSN("¿Confirmar anulacion?")) {
-            llamadas.remove(seleccionada);
-            vista.mostrarMensaje("¡Exito! La llamada " + seleccionada.getCodigoLlamada() + " ha sido anulada del sistema.");
+            if (admiLlamadas.anularLlamada(seleccionada.getCodigoLlamada())) {
+                vista.mostrarMensaje("Exito! La llamada " + seleccionada.getCodigoLlamada()
+                        + " ha sido anulada del sistema.");
+            }
         } else {
             vista.mostrarMensaje("Anulacion cancelada.");
         }
         vista.pausarEnter("Presione ENTER para regresar al Menu de Llamadas...");
     }
 
-    private void gestionOperadores() {
+     private void gestionOperadores() {
         boolean volver = false;
         while (!volver) {
             vista.mostrarEncabezado("[Menu Principal > 2. Administrar operadores]");
             vista.mostrarMensaje("Listado actual de operadores registrados:");
             vista.mostrarMensaje("CODIGO | NOMBRE COMPLETO | TURNO | LLAMADAS ATENDIDAS");
-            for (Operador op : operadores) {
-                int cantLlamadas = contarLlamadasDeOperador(op);
+            for (Operador op : admiOperador.listaOperadores()) {
+                int atendidas = admiLlamadas.contadorLlamadasAtendidas(op);
                 vista.mostrarMensaje(
                         op.getCodigoOp() + " | "
                         + op.getNombreCompleto() + " | "
                         + op.getTurno() + " | "
-                        + cantLlamadas
+                        + atendidas
                 );
             }
 
@@ -335,34 +329,26 @@ public class Controlador {
                 Turno turno = (opTurno == 1) ? Turno.MATUTINO : (opTurno == 2) ? Turno.VESPERTINO : Turno.NOCTURNO;
                 String email = vista.leerTextoOpcional("4. Email (opcional, ENTER para omitir): ");
 
-                Operador nuevo = new Operador(nombres, apellidos, turno, email);
-                operadores.add(nuevo);
-                vista.mostrarMensaje("¡Exito! El operador " + nuevo.getNombreCompleto()
-                        + " ha sido registrado con el codigo " + nuevo.getCodigoOp() + ".");
+                admiOperador.agregarOperador(nombres, apellidos, turno, email);
+                vista.mostrarMensaje("Exito! El operador " + nombres + " " + apellidos + " ha sido registrado.");
                 vista.pausarEnter("Presione ENTER para actualizar y volver a Administrar operadores...");
             } else if (accion == 2) {
                 vista.mostrarEncabezado("[Administrar operadores > Eliminar operador]");
                 String codigo = vista.leerTextoObligatorio("> Ingrese el codigo del operador que desea eliminar: ", "Codigo").toUpperCase();
-                Operador target = null;
-                for (Operador op : operadores) {
-                    if (op.getCodigoOp().equalsIgnoreCase(codigo)) {
-                        target = op;
-                        break;
-                    }
-                }
+                Operador target = admiOperador.buscarOperador(codigo);
                 if (target == null) {
                     vista.mostrarMensaje("No se encontro un operador con codigo " + codigo + ".");
-                } else {
-                    int cant = contarLlamadasDeOperador(target);
-                    if (cant > 0) {
-                        vista.mostrarMensaje("¡No se puede eliminar! El operador " + target.getNombreCompleto()
-                                + " tiene " + cant + " llamadas registradas.");
-                    } else if (vista.confirmarSN("¿Esta seguro de que desea eliminar a " + target.getNombreCompleto() + "?")) {
-                        operadores.remove(target);
-                        vista.mostrarMensaje("¡Exito! El registro del operador ha sido removido.");
+                } else if (admiLlamadas.tieneLlamadasRegistradas(target)) {
+                    vista.mostrarMensaje("No se puede eliminar! El operador " + target.getNombreCompleto()
+                            + " tiene llamadas registradas.");
+                } else if (vista.confirmarSN("Esta seguro de que desea eliminar a " + target.getNombreCompleto() + "?")) {
+                    if (admiOperador.eliminarOperador(codigo)) {
+                        vista.mostrarMensaje("Exito! El registro del operador ha sido removido.");
                     } else {
-                        vista.mostrarMensaje("Eliminacion cancelada.");
+                        vista.mostrarMensaje("No se pudo eliminar el operador.");
                     }
+                } else {
+                    vista.mostrarMensaje("Eliminacion cancelada.");
                 }
                 vista.pausarEnter("Presione ENTER para actualizar y volver a Administrar operadores...");
             } else {
@@ -377,20 +363,21 @@ public class Controlador {
             vista.mostrarEncabezado("[Menu Principal > 3. Administrar ciudadanos]");
             vista.mostrarMensaje("Listado de ciudadanos registrados:");
             vista.mostrarMensaje("CEDULA | NOMBRE COMPLETO | TOTAL LLAMADAS");
-            for (Ciudadano c : ciudadanos) {
-                vista.mostrarMensaje(c.getCedula() + " | " + c.getNombreCompleto() + " | " + contarLlamadasDeCiudadano(c));
+           for (Ciudadano c : admiCiudadano.listaCiudadanos()) {
+                int total = admiLlamadas.historialLlamadas(c).size();
+                vista.mostrarMensaje(c.getCedula() + " | " + c.getNombreCompleto() + " | " + total);
             }
 
             int accion = vista.mostrarMenuCiudadanos();
             if (accion == 1) {
                 String cedula = vista.leerCedulaValida("> Ingrese la cedula del ciudadano (10 digitos): ");
-                Ciudadano c = buscarCiudadanoPorCedula(cedula);
+                Ciudadano c = admiCiudadano.buscarCiudadano(cedula);
                 if (c == null) {
                     vista.mostrarMensaje("No existe un ciudadano registrado con la cedula " + cedula + ".");
                 } else {
                     vista.mostrarMensaje("\nHISTORIAL DE LLAMADAS " + c.getNombreCompleto() + " (C.I. " + c.getCedula() + ")");
                     vista.mostrarMensaje("CODIGO | FECHA Y HORA | TIPO | BARRIO | ESTADO");
-                    for (LlamadaEmergencia ll : llamadas) {
+                    for (LlamadaEmergencia ll : admiLlamadas.historialLlamadas(c)) {
                         if (ll.getCiudadano() != null && c.getCedula().equals(ll.getCiudadano().getCedula())) {
                             String fechaStr = (ll.getFechaHora() != null) ? ll.getFechaHora().format(fmtFechaHora) : "N/A";
                             vista.mostrarMensaje(
@@ -413,25 +400,18 @@ public class Controlador {
     private void gestionNotas() {
         vista.mostrarEncabezado("[Menu Principal > 4. Notas de seguimiento]");
         String codigoLl = vista.leerTextoObligatorio("> Ingrese el codigo de la llamada: ", "Codigo de llamada").toUpperCase();
-        LlamadaEmergencia llamada = buscarLlamadaPorCodigo(codigoLl);
+        LlamadaEmergencia llamada = admiLlamadas.buscarLlamada(codigoLl);
         if (llamada == null) {
             vista.mostrarMensaje("No se encontro ninguna llamada con el codigo " + codigoLl + ".");
             vista.pausarEnter("Presione ENTER para regresar al Menu Principal...");
             return;
         }
 
-        boolean volver = false;
+       boolean volver = false;
         while (!volver) {
             vista.mostrarMensaje("\nNotas de la llamada " + codigoLl + " (Ordenadas desde la mas reciente):");
             vista.mostrarMensaje("FECHA Y HORA | OPERADOR | NOTA");
-            List<NotaSeguimiento> notasLlamada = new ArrayList<>();
-            for (NotaSeguimiento n : notas) {
-                if (n.getLlamada() != null && codigoLl.equalsIgnoreCase(n.getLlamada().getCodigoLlamada())) {
-                    notasLlamada.add(n);
-                }
-            }
-            for (int i = notasLlamada.size() - 1; i >= 0; i--) {
-                NotaSeguimiento n = notasLlamada.get(i);
+            for (NotaSeguimiento n : admiNotas.notaDeLlamada(llamada)) {
                 String nomOp = (n.getOperador() != null) ? n.getOperador().getNombreCompleto() : "N/A";
                 String fechaStr = (n.getFechaHora() != null) ? n.getFechaHora().format(fmtFechaHora) : "N/A";
                 vista.mostrarMensaje(fechaStr + " | " + nomOp + " | " + n.getNota());
@@ -439,31 +419,32 @@ public class Controlador {
 
             int accion = vista.mostrarMenuNotas();
             if (accion == 1) {
-                if (operadores.isEmpty()) {
+                ArrayList<Operador> listaOp = admiOperador.listaOperadores();
+                if (listaOp.isEmpty()) {
                     vista.mostrarMensaje("No hay operadores disponibles.");
                     continue;
                 }
                 vista.mostrarMensaje("\n[Notas de seguimiento > Anadir nota]");
                 vista.mostrarMensaje("Seleccione el operador que registra la nota:");
-                for (int i = 0; i < operadores.size(); i++) {
-                    vista.mostrarMensaje("[" + (i + 1) + "] " + operadores.get(i).getNombreCompleto());
+                for (int i = 0; i < listaOp.size(); i++) {
+                    vista.mostrarMensaje("[" + (i + 1) + "] " + listaOp.get(i).getNombreCompleto());
                 }
-                int idxOp = vista.leerEnteroEnRango("Seleccione el numero de operador: ", 1, operadores.size()) - 1;
-                Operador op = operadores.get(idxOp);
+                int idxOp = vista.leerEnteroEnRango("Seleccione el numero de operador: ", 1, listaOp.size()) - 1;
+                Operador op = listaOp.get(idxOp);
 
                 String fechaHoraNota = LocalDateTime.now().format(fmtFechaHora);
                 vista.mostrarMensaje("Fecha y hora actuales del registro: " + fechaHoraNota);
                 String textoNota = vista.leerTextoObligatorio("> Ingrese el texto de la nota: ", "Texto de la nota");
 
                 NotaSeguimiento nuevaNota = new NotaSeguimiento(textoNota, llamada, op);
-                notas.add(nuevaNota);
+                admiNotas.agregarNota(nuevaNota);
 
                 String fechaGuardada = (nuevaNota.getFechaHora() != null)
                         ? nuevaNota.getFechaHora().format(fmtFechaHora)
                         : fechaHoraNota;
 
                 vista.mostrarMensaje("GUARDANDO NOTA...");
-                vista.mostrarMensaje("¡Exito! La nota ha sido guardada en la llamada " + codigoLl + ":");
+                vista.mostrarMensaje("Exito! La nota ha sido guardada en la llamada " + codigoLl + ":");
                 vista.mostrarMensaje("-> Registro: " + fechaGuardada);
                 vista.mostrarMensaje("-> Operador: " + op.getNombreCompleto());
                 vista.pausarEnter("Presione ENTER para actualizar y volver a Notas de seguimiento...");
@@ -481,43 +462,5 @@ public class Controlador {
             case 4 -> TipoEmergencia.MEDIO_AMBIENTE;
             default -> TipoEmergencia.OTROS;
         };
-    }
-
-    private Ciudadano buscarCiudadanoPorCedula(String cedula) {
-        for (Ciudadano c : ciudadanos) {
-            if (cedula.equals(c.getCedula())) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    private LlamadaEmergencia buscarLlamadaPorCodigo(String codigo) {
-        for (LlamadaEmergencia ll : llamadas) {
-            if (codigo.equalsIgnoreCase(ll.getCodigoLlamada())) {
-                return ll;
-            }
-        }
-        return null;
-    }
-
-    private int contarLlamadasDeOperador(Operador op) {
-        int total = 0;
-        for (LlamadaEmergencia ll : llamadas) {
-            if (ll.getOperador() != null && op.getCodigoOp().equalsIgnoreCase(ll.getOperador().getCodigoOp())) {
-                total++;
-            }
-        }
-        return total;
-    }
-
-    private int contarLlamadasDeCiudadano(Ciudadano c) {
-        int total = 0;
-        for (LlamadaEmergencia ll : llamadas) {
-            if (ll.getCiudadano() != null && c.getCedula().equals(ll.getCiudadano().getCedula())) {
-                total++;
-            }
-        }
-        return total;
     }
 }
