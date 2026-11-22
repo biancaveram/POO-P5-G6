@@ -3,12 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+
 package modelo;
 
 /**
  * Representa los datos de un ciudadano.
  * @author Nathalia
  */
+
 
 
 public class Ciudadano {
@@ -34,36 +36,50 @@ public class Ciudadano {
         this.apellidos = apellidos;
     }
 
-    /** Devuelve la cédula. */
+    /**
+     * Devuelve la cédula.
+     * @return número de cédula del ciudadano.
+     */
     public String getCedula() {
         return cedula;
     }
 
-    /** Devuelve los nombres. */
+    /**
+     * Devuelve los nombres.
+     * @return nombres del ciudadano.
+     */
     public String getNombres() {
         return nombres;
     }
 
-    /** Modifica los nombres.
+    /**
+     * Modifica los nombres.
      * @param nombres nuevos nombres.
      */
     public void setNombres(String nombres) {
         this.nombres = nombres;
     }
 
-    /** Devuelve los apellidos. */
+    /**
+     * Devuelve los apellidos.
+     * @return apellidos del ciudadano.
+     */
     public String getApellidos() {
         return apellidos;
     }
 
-    /** Modifica los apellidos.
+    /**
+     * Modifica los apellidos.
      * @param apellidos nuevos apellidos.
      */
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
 
-    /** Devuelve los nombres y apellidos juntos. */
+    /**
+     * Devuelve los nombres y apellidos juntos.
+     * @return nombre completo del ciudadano.
+     */
     public String getNombreCompleto() {
         return nombres + " " + apellidos;
     }
