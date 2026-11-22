@@ -10,16 +10,23 @@ import modelo.LlamadaEmergencia;
 /**
  *
  * @author BIANCA VERA
+ * Administra la lista de notas de seguimiento del sistema
+ * Permite agregar, buscar, listar y obtener notas de seguimiento 
  */
 public class AdmiNotas {
     private ArrayList<NotaSeguimiento> notas=new ArrayList<>();
     
-    //metodo para agregar una nota
+    //metodo para agregar una nota a la lista
     public void agregarNota(NotaSeguimiento nota){
         notas.add(nota);
     }
     
-    //metodo para buscar una nota por su codigo
+    /**
+     * Busca una nota por su codigo
+     * 
+     * @param codigo codigo de la nota que se quiere buscar
+     * @return la nota encontrada o null si no existe
+     */
     public NotaSeguimiento buscarNota(String codigo){
             for(NotaSeguimiento nota: notas){
                 if(nota.getCodigoNota().equals(codigo)){
@@ -34,7 +41,12 @@ public class AdmiNotas {
         return notas;
     }
     
-    //metodo para obtener las notas de una llamada
+    /**
+     * Obtiene y almacena las notas de una llamada
+     * 
+     * @param llamada objeto de tipo LlamadaEmergencia
+     * @return la lista de notas ordenada
+     */
     public ArrayList<NotaSeguimiento> notaDeLlamada(LlamadaEmergencia llamada){
         ArrayList<NotaSeguimiento> notasLlamada=new ArrayList<>();
         for(NotaSeguimiento nota: notas){
