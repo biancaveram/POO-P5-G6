@@ -5,13 +5,19 @@
 package modelo;
 
 /**
- *
- * @author NATHALIA
+ * Turnos de trabajo de los operadores.
+ * @author Nathalia
  */
 
 public enum Turno {
+
+    /** Turno de la mañana. */
     MATUTINO,
+
+    /** Turno de la tarde. */
     VESPERTINO,
+
+    /** Turno de la noche. */
     NOCTURNO
 }
 

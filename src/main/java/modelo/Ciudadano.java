@@ -2,54 +2,68 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package modelo;
 
 /**
- *
- * @author NATHALIA
+ * Representa los datos de un ciudadano.
+ * @author Nathalia
  */
 
 
 public class Ciudadano {
 
-    // Atributos 
+    /** Cédula del ciudadano. */
     private String cedula;
+
+    /** Nombres del ciudadano. */
     private String nombres;
+
+    /** Apellidos del ciudadano. */
     private String apellidos;
 
-    // Constructor
+    /**
+     * Crea un ciudadano con sus datos personales.
+     * @param cedula número de cédula.
+     * @param nombres nombres del ciudadano.
+     * @param apellidos apellidos del ciudadano.
+     */
     public Ciudadano(String cedula, String nombres, String apellidos) {
         this.cedula = cedula;
         this.nombres = nombres;
         this.apellidos = apellidos;
     }
 
-    // Obtiene la cédula
+    /** Devuelve la cédula. */
     public String getCedula() {
         return cedula;
     }
 
-    // Obtiene los nombres
+    /** Devuelve los nombres. */
     public String getNombres() {
         return nombres;
     }
 
-    // Modifica los nombres
+    /** Modifica los nombres.
+     * @param nombres nuevos nombres.
+     */
     public void setNombres(String nombres) {
         this.nombres = nombres;
     }
 
-    // Obtiene los apellidos
+    /** Devuelve los apellidos. */
     public String getApellidos() {
         return apellidos;
     }
 
-    // Modifica los apellidos
+    /** Modifica los apellidos.
+     * @param apellidos nuevos apellidos.
+     */
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
 
-    // Obtiene el nombre completo
+    /** Devuelve los nombres y apellidos juntos. */
     public String getNombreCompleto() {
         return nombres + " " + apellidos;
     }

@@ -5,14 +5,24 @@
 package modelo;
 
 /**
- *
- * @author NATHALIA
+ * Tipos de emergencia que se pueden reportar.
+ * @author Nathalia
  */
 
 public enum TipoEmergencia {
-    ENERGIA,
-    CIVIL,
-    TRANSITO,
-    MEDIO_AMBIENTE,
-    OTROS
+
+    /** Emergencia relacionada con la salud. */
+    MEDICA,
+
+    /** Emergencia relacionada con un incendio. */
+    INCENDIO,
+
+    /** Emergencia relacionada con la seguridad. */
+    SEGURIDAD,
+
+    /** Emergencia relacionada con un accidente. */
+    ACCIDENTE,
+
+    /** Otro tipo de emergencia. */
+    OTRO
 }

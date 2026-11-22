@@ -4,36 +4,47 @@
  */
 package modelo;
 
+
+import java.time.LocalDateTime;
+
 /**
- *
- * @author NATHALIA
+ * Representa una nota de seguimiento de una llamada.
+ * @author Nathalia
  */
 
 
-import java.time.LocalDateTime;
+
 
 
 public class NotaSeguimiento {
 
-    // Contador para generar códigos secuenciales
+    /** Contador para generar los códigos de las notas. */
     private static int contador = 0;
 
-    // Atributos de la nota
-    private String codigoNota;
-    private LocalDateTime fechaHora;
+    /** Código de la nota. */
+    private final String codigoNota;
+
+    /** Fecha y hora en que se creó la nota. */
+    private final LocalDateTime fechaHora;
+
+    /** Texto de la nota. */
     private String nota;
 
-    // Relaciones
-    private LlamadaEmergencia llamada;
-    private Operador operador;
+    /** Llamada a la que pertenece la nota. */
+    private final LlamadaEmergencia llamada;
 
-    // Constructor
-    public NotaSeguimiento(String nota,
-                           LlamadaEmergencia llamada,
-                           Operador operador) {
+    /** Operador que registró la nota. */
+    private final Operador operador;
 
+    /**
+     * Crea una nota y genera automáticamente su código y fecha.
+     * @param nota texto que se va a registrar.
+     * @param llamada llamada relacionada.
+     * @param operador operador que registra la nota.
+     */
+   
+    public NotaSeguimiento(String nota, LlamadaEmergencia llamada, Operador operador) {
         contador++;
-
         this.codigoNota = String.format("NT-%03d", contador);
         this.fechaHora = LocalDateTime.now();
         this.nota = nota;
@@ -41,29 +52,39 @@ public class NotaSeguimiento {
         this.operador = operador;
     }
 
-
+    /** Devuelve el código de la nota.
+     * @return  */
     public String getCodigoNota() {
         return codigoNota;
     }
 
+    /** Devuelve la fecha y hora de creación.
+     * @return  */
     public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
-
+    /** Devuelve el texto de la nota.
+     * @return  */
     public String getNota() {
         return nota;
     }
 
-    // Modifica el contenido
+    /** Modifica el texto de la nota.
+     * @param nota nuevo texto.
+     */
     public void setNota(String nota) {
         this.nota = nota;
     }
 
+    /** Devuelve la llamada relacionada.
+     * @return  */
     public LlamadaEmergencia getLlamada() {
         return llamada;
     }
 
+    /** Devuelve el operador que registró la nota.
+     * @return  */
     public Operador getOperador() {
         return operador;
     }
