@@ -13,6 +13,7 @@ import modelo.*;
 import vista.Vista;
 
 /**
+ * @author Henry De la Torre
  * Controlador principal del Sistema de Registro de Llamadas ECU 911.
  * Coordina la Vista, los administradores en memoria y los modelos del dominio.
  */
@@ -113,7 +114,7 @@ public class Controlador {
 
     private void listarLlamadasRecientes() {
         vista.mostrarEncabezado("[Menu Principal > 1. Llamadas > 1.1. Lista de llamadas]");
-        ArrayList<LlamadaEmergencia> lista= admiLlamadas.listaLlamadas();
+        ArrayList<LlamadaEmergencia> lista = admiLlamadas.listaLlamadas();
         if (lista.isEmpty()) {
             vista.mostrarMensaje("No hay llamadas registradas.");
         } else {
@@ -163,8 +164,7 @@ public class Controlador {
             vista.mostrarMensaje("Ciudadano ya registrado en el sistema: " + ciudadano.getNombreCompleto()
                     + ". Se utilizaran los datos existentes.");
         } else {
-            admiCiudadano.agregarCiudadano(cedula, nombres, apellidos);
-            ciudadano = admiCiudadano.buscarCiudadano(cedula);
+            ciudadano = admiCiudadano.agregarCiudadano(cedula, nombres, apellidos);
         }
 
         vista.mostrarMensaje("\nDATOS DE LA EMERGENCIA");
@@ -241,8 +241,12 @@ public class Controlador {
 
         vista.mostrarMensaje("El estado actual es \"" + actual + "\". El nuevo estado sera \"" + siguiente + "\".");
         if (vista.confirmarSN("¿Confirmar el cambio?")) {
-            objetivo.actualizarEstado();
-            vista.mostrarMensaje("¡Exito! La llamada " + objetivo.getCodigoLlamada() + " ahora esta \"" + objetivo.getEstado() + "\".");
+            if (admiLlamadas.actualizarEstadoG(codigo)) {
+                vista.mostrarMensaje("¡Exito! La llamada " + objetivo.getCodigoLlamada()
+                        + " ahora esta \"" + objetivo.getEstado() + "\".");
+            } else {
+                vista.mostrarMensaje("No fue posible actualizar el estado de la llamada.");
+            }
         } else {
             vista.mostrarMensaje("Cambio cancelado.");
         }
@@ -303,7 +307,7 @@ public class Controlador {
         vista.pausarEnter("Presione ENTER para regresar al Menu de Llamadas...");
     }
 
-     private void gestionOperadores() {
+    private void gestionOperadores() {
         boolean volver = false;
         while (!volver) {
             vista.mostrarEncabezado("[Menu Principal > 2. Administrar operadores]");
@@ -329,8 +333,9 @@ public class Controlador {
                 Turno turno = (opTurno == 1) ? Turno.MATUTINO : (opTurno == 2) ? Turno.VESPERTINO : Turno.NOCTURNO;
                 String email = vista.leerTextoOpcional("4. Email (opcional, ENTER para omitir): ");
 
-                admiOperador.agregarOperador(nombres, apellidos, turno, email);
-                vista.mostrarMensaje("Exito! El operador " + nombres + " " + apellidos + " ha sido registrado.");
+                Operador nuevoOperador = admiOperador.agregarOperador(nombres, apellidos, turno, email);
+                vista.mostrarMensaje("Exito! El operador " + nuevoOperador.getNombreCompleto()
+                        + " ha sido registrado con el codigo " + nuevoOperador.getCodigoOp() + ".");
                 vista.pausarEnter("Presione ENTER para actualizar y volver a Administrar operadores...");
             } else if (accion == 2) {
                 vista.mostrarEncabezado("[Administrar operadores > Eliminar operador]");
@@ -339,8 +344,9 @@ public class Controlador {
                 if (target == null) {
                     vista.mostrarMensaje("No se encontro un operador con codigo " + codigo + ".");
                 } else if (admiLlamadas.tieneLlamadasRegistradas(target)) {
+                    int cantidad = admiLlamadas.contadorLlamadasOperador(target);
                     vista.mostrarMensaje("No se puede eliminar! El operador " + target.getNombreCompleto()
-                            + " tiene llamadas registradas.");
+                            + " tiene " + cantidad + " llamadas registradas.");
                 } else if (vista.confirmarSN("Esta seguro de que desea eliminar a " + target.getNombreCompleto() + "?")) {
                     if (admiOperador.eliminarOperador(codigo)) {
                         vista.mostrarMensaje("Exito! El registro del operador ha sido removido.");
@@ -363,7 +369,7 @@ public class Controlador {
             vista.mostrarEncabezado("[Menu Principal > 3. Administrar ciudadanos]");
             vista.mostrarMensaje("Listado de ciudadanos registrados:");
             vista.mostrarMensaje("CEDULA | NOMBRE COMPLETO | TOTAL LLAMADAS");
-           for (Ciudadano c : admiCiudadano.listaCiudadanos()) {
+            for (Ciudadano c : admiCiudadano.listaCiudadanos()) {
                 int total = admiLlamadas.historialLlamadas(c).size();
                 vista.mostrarMensaje(c.getCedula() + " | " + c.getNombreCompleto() + " | " + total);
             }
@@ -407,7 +413,7 @@ public class Controlador {
             return;
         }
 
-       boolean volver = false;
+        boolean volver = false;
         while (!volver) {
             vista.mostrarMensaje("\nNotas de la llamada " + codigoLl + " (Ordenadas desde la mas reciente):");
             vista.mostrarMensaje("FECHA Y HORA | OPERADOR | NOTA");

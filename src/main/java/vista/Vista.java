@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author Henry
+ * @author Henry De la Torre
  * Vista de consola para el Sistema de Registro de Llamadas ECU 911.
  */
 public class Vista {
