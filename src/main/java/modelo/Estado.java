@@ -5,12 +5,18 @@
 package modelo;
 
 /**
- *
- * @author NATHALIA
+ * Estados por los que puede pasar una llamada de emergencia.
+ * @author Nathalia
  */
 
 public enum Estado {
+
+    /** La llamada acaba de ser registrada. */
     REGISTRADA,
+
+    /** La llamada está siendo atendida. */
     EN_ATENCION,
+
+    /** La atención de la llamada ha finalizado. */
     ATENDIDA
 }
