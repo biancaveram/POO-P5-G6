@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
  * @author Nathalia
  */
 
-
-
-
-
 public class NotaSeguimiento {
 
     /** Contador para generar los códigos de las notas. */
@@ -53,19 +49,19 @@ public class NotaSeguimiento {
     }
 
     /** Devuelve el código de la nota.
-     * @return  */
+     * @return el codigo de la nota */
     public String getCodigoNota() {
         return codigoNota;
     }
 
     /** Devuelve la fecha y hora de creación.
-     * @return  */
+     * @return la fecha en que de creo */
     public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
     /** Devuelve el texto de la nota.
-     * @return  */
+     * @return el texto de la nota*/
     public String getNota() {
         return nota;
     }
@@ -78,13 +74,13 @@ public class NotaSeguimiento {
     }
 
     /** Devuelve la llamada relacionada.
-     * @return  */
+     * @return la llamada  */
     public LlamadaEmergencia getLlamada() {
         return llamada;
     }
 
     /** Devuelve el operador que registró la nota.
-     * @return  */
+     * @return el operador */
     public Operador getOperador() {
         return operador;
     }
